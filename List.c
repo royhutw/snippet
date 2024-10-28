@@ -13,17 +13,17 @@ typedef int ElemType;       /* ElemType型態根據實際情況而定，這裡�
 typedef int Status;         /* Status是函數的型態,其值是函數結果狀態程式碼，如OK等 */
 
 /* forward declaration */
-typedef struct list SqList;
+typedef struct _SqList SqList;
 typedef Status (*func_t)(SqList *);
 typedef Status (*func_t2)(SqList *, int, ElemType *);
 typedef Status (*func_t3)(SqList *, int, ElemType);
 typedef Status (*func_t4)(SqList *, ElemType);
-struct list {
+struct _SqList {
     ElemType data[MAXSIZE];
     int length;
     func_t GetLength, ListTraverse, ListEmpty, ClearList;
     func_t2 GetElem, ListDelete;
-    func_t3 ListInsert;
+    func_t3 Insert;
     func_t4 LocateElem;
 };
 
@@ -45,7 +45,7 @@ static Status GetElem_impl(SqList *self, int i, ElemType *e) {
 /* method */
 /* 起始條件：順序線性串列L已存在,1 <= i <= SqList->length */
 /* 動作結果：在L中第i個位置之前插入新的資料元素e，L的長度加1 */
-static Status ListInsert_impl(SqList *self, int i, ElemType e) {
+static Status Insert_impl(SqList *self, int i, ElemType e) {
 	int k;
 	if (self->length ==MAXSIZE)  /* 順序線性串列已經滿 */
 		return ERROR;
@@ -142,7 +142,7 @@ int init_list(SqList **self) {
     (*self)->length = 0;
     (*self)->GetLength = GetLength_imp;
     (*self)->GetElem = GetElem_impl;
-    (*self)->ListInsert = ListInsert_impl;
+    (*self)->Insert = Insert_impl;
     (*self)->ListTraverse = ListTraverse_impl;
     (*self)->ListEmpty = ListEmpty_impl;
     (*self)->ClearList = ClearList_impl;
@@ -164,7 +164,7 @@ int main(int argc, char *argv[])
     printf("\n起始化L後：L.length=%d\n",L->GetLength(L));
 
     for (j=1;j<=5;j++)
-        i=L->ListInsert(L, 1, j);
+        i=L->Insert(L, 1, j);
     printf("在L的標頭依次插入1～5後：L.data=");
     L->ListTraverse(L);
 
@@ -178,13 +178,13 @@ int main(int argc, char *argv[])
     printf("L是否空：i=%d(1:是 0:否)\n",i);
 
     for(j=1;j<=10;j++)
-            L->ListInsert(L,j,j);
+            L->Insert(L,j,j);
     printf("在L的表尾依次插入1～10後：L->data=");
     L->ListTraverse(L);
 
     printf("L->GetLength(L)=%d \n",L->GetLength(L));
 
-    L->ListInsert(L, 1, 0);
+    L->Insert(L, 1, 0);
     printf("在L的標頭插入0後：L->data=");
     L->ListTraverse(L);
     printf("L->GetLength(L)=%d \n",L->GetLength(L));
@@ -220,5 +220,6 @@ int main(int argc, char *argv[])
     L->ListTraverse(L); 
 
     free(L);
+    
     return 0;
 }
